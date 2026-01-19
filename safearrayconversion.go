@@ -37,7 +37,7 @@ func (sac *SafeArrayConversion) ToValueArray() (values []interface{}) {
 	totalElements, _ := sac.TotalElements(0)
 	values = make([]interface{}, totalElements)
 	vt, _ := safeArrayGetVartype(sac.Array)
-	lbound, _ := sac.GetLowerBound()
+	lbound, _ := sac.GetLowerBound(0)
 
 	for i := int32(lbound); i < totalElements+lbound; i++ {
 		switch VT(vt) {
@@ -148,10 +148,13 @@ func (sac *SafeArrayConversion) Release() {
 func (sac *SafeArrayConversion) PrintValueArrayInfo() {
 	totalElements, _ := sac.TotalElements(0)
 	vt, _ := safeArrayGetVartype(sac.Array)
-	lbound, _ := sac.GetLowerBound()
+	lbound, _ := sac.GetLowerBound(0)
 	fmt.Printf("sac: %+v\n , totalElements: %v, vartype: %v\n, lbound: %v\n", sac, totalElements, vt, lbound)
 }
 
-func (sac *SafeArrayConversion) GetLowerBound() (lowerBound int32, err error) {
-	return safeArrayGetLBound(sac.Array, 0)
+func (sac *SafeArrayConversion) GetLowerBound(dimension uint32) (lowerBound int32, err error) {
+	if dimension < 1 {
+		dimension = 1
+	}
+	return safeArrayGetLBound(sac.Array, dimension)
 }

@@ -3,6 +3,7 @@
 package ole
 
 import (
+	"fmt"
 	"unsafe"
 )
 
@@ -36,8 +37,9 @@ func (sac *SafeArrayConversion) ToValueArray() (values []interface{}) {
 	totalElements, _ := sac.TotalElements(0)
 	values = make([]interface{}, totalElements)
 	vt, _ := safeArrayGetVartype(sac.Array)
+	lbound, _ := sac.GetLowerBound()
 
-	for i := int32(0); i < totalElements; i++ {
+	for i := int32(lbound); i < totalElements+lbound; i++ {
 		switch VT(vt) {
 		case VT_BOOL:
 			var v bool
@@ -84,13 +86,17 @@ func (sac *SafeArrayConversion) ToValueArray() (values []interface{}) {
 			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
 			values[i] = v
 		case VT_BSTR:
-			v , _ := safeArrayGetElementString(sac.Array, i)
+			v, _ := safeArrayGetElementString(sac.Array, i)
 			values[i] = v
 		case VT_VARIANT:
 			var v VARIANT
 			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
 			values[i] = v.Value()
 			v.Clear()
+		case VT_DATE:
+			var v float64
+			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
+			values[i] = v
 		default:
 			// TODO
 		}
@@ -137,4 +143,15 @@ func (sac *SafeArrayConversion) TotalElements(index uint32) (totalElements int32
 // Release Safe Array memory
 func (sac *SafeArrayConversion) Release() {
 	safeArrayDestroy(sac.Array)
+}
+
+func (sac *SafeArrayConversion) PrintValueArrayInfo() {
+	totalElements, _ := sac.TotalElements(0)
+	vt, _ := safeArrayGetVartype(sac.Array)
+	lbound, _ := sac.GetLowerBound()
+	fmt.Printf("sac: %+v\n , totalElements: %v, vartype: %v\n, lbound: %v\n", sac, totalElements, vt, lbound)
+}
+
+func (sac *SafeArrayConversion) GetLowerBound() (lowerBound int32, err error) {
+	return safeArrayGetLBound(sac.Array, 0)
 }

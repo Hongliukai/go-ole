@@ -39,63 +39,63 @@ func (sac *SafeArrayConversion) ToValueArray() (values []interface{}) {
 	vt, _ := safeArrayGetVartype(sac.Array)
 	lbound, _ := sac.GetLowerBound(0)
 
-	for i := int32(lbound); i < totalElements+lbound; i++ {
+	for i := int32(0); i < totalElements; i++ {
 		switch VT(vt) {
 		case VT_BOOL:
 			var v bool
-			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
+			safeArrayGetElement(sac.Array, i+lbound, unsafe.Pointer(&v))
 			values[i] = v
 		case VT_I1:
 			var v int8
-			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
+			safeArrayGetElement(sac.Array, i+lbound, unsafe.Pointer(&v))
 			values[i] = v
 		case VT_I2:
 			var v int16
-			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
+			safeArrayGetElement(sac.Array, i+lbound, unsafe.Pointer(&v))
 			values[i] = v
 		case VT_I4:
 			var v int32
-			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
+			safeArrayGetElement(sac.Array, i+lbound, unsafe.Pointer(&v))
 			values[i] = v
 		case VT_I8:
 			var v int64
-			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
+			safeArrayGetElement(sac.Array, i+lbound, unsafe.Pointer(&v))
 			values[i] = v
 		case VT_UI1:
 			var v uint8
-			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
+			safeArrayGetElement(sac.Array, i+lbound, unsafe.Pointer(&v))
 			values[i] = v
 		case VT_UI2:
 			var v uint16
-			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
+			safeArrayGetElement(sac.Array, i+lbound, unsafe.Pointer(&v))
 			values[i] = v
 		case VT_UI4:
 			var v uint32
-			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
+			safeArrayGetElement(sac.Array, i+lbound, unsafe.Pointer(&v))
 			values[i] = v
 		case VT_UI8:
 			var v uint64
-			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
+			safeArrayGetElement(sac.Array, i+lbound, unsafe.Pointer(&v))
 			values[i] = v
 		case VT_R4:
 			var v float32
-			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
+			safeArrayGetElement(sac.Array, i+lbound, unsafe.Pointer(&v))
 			values[i] = v
 		case VT_R8:
 			var v float64
-			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
+			safeArrayGetElement(sac.Array, i+lbound, unsafe.Pointer(&v))
 			values[i] = v
 		case VT_BSTR:
-			v, _ := safeArrayGetElementString(sac.Array, i)
+			v, _ := safeArrayGetElementString(sac.Array, i+lbound)
 			values[i] = v
 		case VT_VARIANT:
 			var v VARIANT
-			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
+			safeArrayGetElement(sac.Array, i+lbound, unsafe.Pointer(&v))
 			values[i] = v.Value()
 			v.Clear()
 		case VT_DATE:
 			var v float64
-			safeArrayGetElement(sac.Array, i, unsafe.Pointer(&v))
+			safeArrayGetElement(sac.Array, i+lbound, unsafe.Pointer(&v))
 			values[i] = v
 		default:
 			// TODO
